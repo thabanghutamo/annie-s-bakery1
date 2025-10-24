@@ -3,7 +3,12 @@ import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional, Dict, Any, List, TypedDict
-import stripe
+
+try:
+    import stripe
+    STRIPE_AVAILABLE = True
+except ImportError:
+    STRIPE_AVAILABLE = False
 
 @dataclass
 class PaymentConfig:
@@ -226,6 +231,8 @@ def get_payment_gateway() -> Optional[PaymentGateway]:
     provider = os.getenv('PAYMENT_PROVIDER', '').lower()
     
     if provider == 'stripe':
+        if not STRIPE_AVAILABLE:
+            raise PaymentError("Stripe package is not installed. Please install it with 'pip install stripe'")
         return StripeGateway(PaymentConfig(
             provider='stripe',
             api_key=os.getenv('STRIPE_API_KEY', ''),

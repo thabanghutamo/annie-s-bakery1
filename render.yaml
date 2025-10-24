@@ -3,7 +3,8 @@ services:
     name: annies-bakery
     env: python
     plan: starter
-    buildCommand: pip install -r requirements.txt
+    buildCommand: |
+      pip install -r requirements.txt
     startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 4 --timeout 60
     envVars:
       - key: FLASK_ENV
@@ -14,6 +15,12 @@ services:
         generateValue: true
       - key: FLASK_APP
         value: app.py
+      - key: PAYMENT_PROVIDER
+        value: stripe
+      - key: STRIPE_API_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
     healthCheckPath: /
     autoDeploy: true
     disk:
