@@ -13,10 +13,11 @@ def validate_image(form, field):
 
 class BaseForm(Form):
     """Base form class with CSRF protection."""
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if 'formdata' in kwargs:
-            self.process(kwargs['formdata'])
+    def __init__(self, formdata=None, obj=None, prefix='', data=None, **kwargs):
+        """Initialize form with improved data handling."""
+        if formdata is not None and not isinstance(formdata, (dict, list, tuple)):
+            formdata = dict(formdata)
+        super().__init__(formdata=formdata, obj=obj, prefix=prefix, data=data, **kwargs)
 
 class ProductForm(BaseForm):
     """Form for creating/editing products."""

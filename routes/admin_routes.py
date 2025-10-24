@@ -217,8 +217,14 @@ def products():
 @admin_required
 def products_new():
     """Create a new product."""
-    form = ProductForm()
-    if form.validate_on_submit():
+    form = ProductForm(request.form)
+    if request.method == 'GET':
+        return render_template('admin/edit_product.html', form=form)
+
+    if not form.validate():
+        flash('Please correct the errors below', 'error')
+        return render_template('admin/edit_product.html', form=form)
+    
         products = cast(Products, read_json('products.json', []))
         
         # Extract and validate form data
@@ -268,18 +274,32 @@ def products_edit(product_id: str):
         flash('Product not found', 'error')
         return redirect(url_for('admin.products'))
     
-    form = ProductForm()
+    form = ProductForm(request.form if request.method == 'POST' else None)
+    if request.method == 'GET':
+        # Populate form with product data
+        form = ProductForm(data={
+            'title': product.get('title', ''),
+            'description': product.get('description', ''),
+            'short_description': product.get('short_description', ''),
+            'price': product.get('price', 0.0),
+            'category': product.get('category', ''),
+            'visible': product.get('visible', False),
+            'featured': product.get('featured', False),
+            'publish_at': product.get('publish_at')
+        })
+
+    if request.method == 'GET':
+        return render_template('admin/edit_product.html', form=form, product=product)
     
-    if request.method == 'POST':
-        print(f"Form submitted. Files: {request.files}")
-        print(f"Form data: {request.form}")
-        
-        if not form.validate():
-            print(f"Form validation errors: {form.errors}")
-            flash('Please correct the errors below', 'error')
-            return render_template('admin/edit_product.html', form=form, product=product)
-            
-    if form.validate_on_submit():
+    print(f"Form submitted. Files: {request.files}")
+    print(f"Form data: {request.form}")
+    
+    if not form.validate():
+        print(f"Form validation errors: {form.errors}")
+        flash('Please correct the errors below', 'error')
+        return render_template('admin/edit_product.html', form=form, product=product)
+    
+    # Form validated successfully
         print(f"Processing edit form for product: {product_id}")
         # Get form data with type safety
         product_data = extract_product_form_data(form)
