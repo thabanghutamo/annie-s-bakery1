@@ -2,12 +2,21 @@ services:
   - type: web
     name: annies-bakery
     env: python
+    plan: starter
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT
+    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 4 --timeout 60
     envVars:
       - key: FLASK_ENV
         value: production
       - key: PYTHON_VERSION
         value: 3.11.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FLASK_APP
+        value: app.py
     healthCheckPath: /
     autoDeploy: true
+    disk:
+      name: uploads
+      mountPath: /var/www/annies/uploads
+      sizeGB: 1
