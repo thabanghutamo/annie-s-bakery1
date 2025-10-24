@@ -1,0 +1,62 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Admin - Blog Posts{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card">
+  <div class="admin-card-header">
+    <div class="flex justify-between items-center">
+      <h1 class="admin-title">Blog Posts</h1>
+      <a href="{{ url_for('admin.blog_new') }}" class="admin-button-primary">
+        <svg class="-ml-1 mr-2 h-5 w-5 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        New Post
+      </a>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto responsive-table">
+    <table class="admin-table min-w-full">
+      <thead>
+        <tr>
+          <th class="text-sm sm:text-base">Title</th>
+          <th class="text-sm sm:text-base hidden sm:table-cell">Date</th>
+          <th class="text-sm sm:text-base">Status</th>
+          <th class="text-sm sm:text-base text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in posts %}
+        <tr>
+          <td>
+            <div class="font-medium text-sm sm:text-base">{{ p.title }}</div>
+            <div class="text-xs text-gray-500 sm:hidden">{{ p.date }}</div>
+          </td>
+          <td class="hidden sm:table-cell">{{ p.date }}</td>
+          <td>
+            <span class="admin-badge text-xs sm:text-sm {{ 'admin-badge-success' if p.published else 'admin-badge-info' }}">
+              {{ 'Published' if p.published else 'Draft' }}
+            </span>
+          </td>
+          <td class="text-right whitespace-nowrap">
+            <a href="{{ url_for('admin.blog_edit', post_id=p.id) }}" 
+               class="text-pink-600 hover:text-pink-900 mr-2 sm:mr-4 text-sm sm:text-base">Edit</a>
+            <form method="post" action="{{ url_for('admin.blog_delete', post_id=p.id) }}" class="inline">
+              <button type="submit" onclick="return confirm('Are you sure you want to delete this post?')"
+                      class="text-red-600 hover:text-red-900 text-sm sm:text-base">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="4" class="text-center text-gray-500">
+            No blog posts yet. Click "New Post" to create one.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

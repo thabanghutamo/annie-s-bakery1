@@ -1,0 +1,8 @@
+[
+  {
+    "id": "admin-1",
+    "email": "thabanghutamo@gmail.com",
+    "password_hash": "scrypt:32768:8:1$UIibcagcXCnO88Zy$555f3a6bbad47d28444b61252751768160e4bcb7c4330c8de598a14aec60cde5833adb9a1c3b3856405d6920a904afbd65983597498e602d9cd6da4a5fba3f6c",
+    "is_admin": true
+  }
+]

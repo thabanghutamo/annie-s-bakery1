@@ -1,0 +1,26 @@
+[
+  {
+    "id": "order-1698106001",
+    "customer_name": "John Doe",
+    "customer_email": "john@example.com",
+    "customer_phone": "555-0124",
+    "items": [
+      {
+        "id": "product-1",
+        "title": "Classic Vanilla Cupcakes",
+        "quantity": 12,
+        "price": 35.0
+      },
+      {
+        "id": "product-2",
+        "title": "Chocolate Chip Cookies",
+        "quantity": 24,
+        "price": 15.0
+      }
+    ],
+    "total": 600.0,
+    "status": "in_progress",
+    "payment_status": "refunded",
+    "updated_at": "2025-10-24T10:33:12.104393+00:00"
+  }
+]

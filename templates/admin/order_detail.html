@@ -1,0 +1,235 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Order Details{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+        <a href="{{ url_for('admin.orders') }}" class="text-blue-600 hover:text-blue-900">← Back to Orders</a>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <!-- Order Header -->
+        <div class="px-6 py-4 bg-gray-50 border-b">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">
+                        {{ 'Custom Order' if is_custom else 'Order' }} #{{ order.id }}
+                    </h1>
+                    <p class="text-gray-600">Created: {{ order.created_at|replace('T', ' ')|replace('Z', '') }}</p>
+                    {% if order.updated_at %}
+                    <p class="text-gray-600">Last Updated: {{ order.updated_at|replace('T', ' ')|replace('Z', '') }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Status Indicators -->
+                <div class="text-right">
+                    <span class="px-3 py-1 inline-flex text-sm font-semibold rounded-full
+                        {% if order.status == 'completed' %}bg-green-100 text-green-800
+                        {% elif order.status == 'cancelled' %}bg-red-100 text-red-800
+                        {% else %}bg-blue-100 text-blue-800{% endif %}">
+                        {{ order.status|replace('_', ' ')|title }}
+                    </span>
+                    <span class="ml-2 px-3 py-1 inline-flex text-sm font-semibold rounded-full
+                        {% if order.payment_status == 'paid' %}bg-green-100 text-green-800
+                        {% elif order.payment_status == 'cancelled' %}bg-red-100 text-red-800
+                        {% elif order.payment_status == 'refunded' %}bg-yellow-100 text-yellow-800
+                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                        {{ order.payment_status|replace('_', ' ')|title }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <!-- Customer Information -->
+            <div class="mb-8">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Customer Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Name</label>
+                        <div class="mt-1 text-gray-900">{{ order.get('customer_name') or order.get('name') }}</div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                        <div class="mt-1 text-gray-900">{{ order.get('customer_email') or order.get('email') }}</div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Phone</label>
+                        <div class="mt-1 text-gray-900">{{ order.get('customer_phone') or order.get('phone') or 'Not provided' }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Details -->
+            {% if is_custom %}
+            <!-- Custom Order Details -->
+            <div class="mb-8">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Custom Order Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Size</label>
+                            <div class="mt-1 text-gray-900">{{ order['size'] }}</div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Flavor</label>
+                            <div class="mt-1 text-gray-900">{{ order['flavor'] }}</div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Filling</label>
+                            <div class="mt-1 text-gray-900">{{ order.get('filling', 'None') }}</div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Frosting</label>
+                            <div class="mt-1 text-gray-900">{{ order['frosting'] }}</div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Message on Cake</label>
+                            <div class="mt-1 text-gray-900">{{ order.get('message', 'None') }}</div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Pickup Date</label>
+                            <div class="mt-1 text-gray-900">{{ order['pickup_date'] }}</div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Allergies/Dietary Restrictions</label>
+                            <div class="mt-1 text-gray-900">{{ order.get('allergies', 'None') }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700">Design Details</label>
+                    <div class="mt-1 text-gray-900 whitespace-pre-line">{{ order['design_details'] }}</div>
+                </div>
+                
+                {% if order.get('reference_image') %}
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700">Reference Image</label>
+                    <div class="mt-2">
+                        <img src="{{ order['reference_image'] }}" 
+                             alt="Reference Image"
+                             class="max-w-lg rounded-lg shadow-sm">
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if order.get('special_instructions') %}
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700">Special Instructions</label>
+                    <div class="mt-1 text-gray-900 whitespace-pre-line">{{ order['special_instructions'] }}</div>
+                </div>
+                {% endif %}
+            </div>
+            {% else %}
+            <!-- Standard Order Items -->
+            <div class="mb-8">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Order Items</h2>
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Quantity</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Price</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% if order['items'] %}
+                            {% for item in order['items'] %}
+                            <tr>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900">{{ item['title'] }}</div>
+                                    {% if item['product_id'] in products %}
+                                    <div class="text-sm text-gray-500">{{ products[item['product_id']]['description'] }}</div>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-900 text-right">{{ item['quantity'] }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-900 text-right">R{{ "%.2f"|format(item['price']) }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-900 text-right">
+                                    R{{ "%.2f"|format(item['price'] * item['quantity']) }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                        <tr class="bg-gray-50">
+                            <td colspan="3" class="px-6 py-4 text-sm font-medium text-gray-900 text-right">Total</td>
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900 text-right">
+                                R{{ "%.2f"|format(order.total) }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+
+            <!-- Update Form -->
+            <form method="post" class="space-y-6" id="orderForm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-700">Order Status</label>
+                        <select id="status" name="status" 
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            {% for status in statuses %}
+                            <option value="{{ status }}" {% if status == order.get('status') %}selected{% endif %}>
+                                {{ status|replace('_', ' ')|title }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="payment_status" class="block text-sm font-medium text-gray-700">Payment Status</label>
+                        <select id="payment_status" name="payment_status"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            {% for status in payment_statuses %}
+                            <option value="{{ status }}" {% if status == order.payment_status %}selected{% endif %}>
+                                {{ status|replace('_', ' ')|title }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="notes" class="block text-sm font-medium text-gray-700">Notes</label>
+                    <textarea id="notes" name="notes" rows="4"
+                              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">{{ order.notes or '' }}</textarea>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit" 
+                            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Update Order
+                    </button>
+                </div>
+            </form>
+            
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const form = document.getElementById('orderForm');
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        fetch(window.location.href, {
+                            method: 'POST',
+                            body: new FormData(form),
+                        })
+                        .then(response => response.text())
+                        .then(() => {
+                            // Reload the page to show updated data
+                            window.location.reload();
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Failed to update order. Please try again.');
+                        });
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</div>
+{% endblock %}

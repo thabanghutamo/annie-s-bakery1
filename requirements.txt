@@ -1,0 +1,15 @@
+Flask==2.2.5
+Flask-Login==0.6.3
+Flask-WTF==1.1.1
+python-dotenv==1.0.0
+Werkzeug==2.3.7
+itsdangerous==2.1.2
+
+# Testing
+pytest==7.4.3
+pytest-cov==4.1.0
+
+# Payment Gateways (uncomment the one you need)
+#stripe==6.6.0
+#paystack==1.5.0  # via pip install paystack-python
+#yoco==0.1.0      # hypothetical package

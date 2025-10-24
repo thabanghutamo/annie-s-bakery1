@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Cake Order - Annie's Bakery</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+</head>
+<body class="bg-amber-50">
+  <nav class="bg-amber-800 text-white shadow-lg">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex justify-between h-16">
+        <div class="flex">
+          <a href="/" class="flex items-center font-bold text-2xl">Annie's Bakery</a>
+          <div class="ml-8 flex items-center space-x-4">
+            <a href="/products" class="hover:text-amber-200">Products</a>
+            <a href="/blog" class="hover:text-amber-200">Blog</a>
+            <a href="/order" class="hover:text-amber-200">Custom Orders</a>
+            <a href="/contact" class="hover:text-amber-200">Contact</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-4xl mx-auto py-8 px-4">
+    <h1 class="text-3xl font-bold text-amber-900 mb-8 text-center">Custom Cake Order</h1>
+    
+    <form method="post" action="/order" class="bg-white rounded-lg shadow-md p-6 space-y-6" enctype="multipart/form-data">
+      <!-- Personal Information -->
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-amber-900 border-b pb-2">Personal Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700">Full Name *</label>
+            <input type="text" id="name" name="name" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500">
+          </div>
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700">Email *</label>
+            <input type="email" id="email" name="email" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500">
+          </div>
+          <div>
+            <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+            <input type="tel" id="phone" name="phone"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500">
+          </div>
+          <div>
+            <label for="pickup_date" class="block text-sm font-medium text-gray-700">Desired Pickup Date *</label>
+            <input type="text" id="pickup_date" name="pickup_date" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500"
+              min="{{ min_date }}" max="{{ max_date }}">
+          </div>
+        </div>
+      </div>
+
+      <!-- Cake Details -->
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-amber-900 border-b pb-2">Cake Details</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="size" class="block text-sm font-medium text-gray-700">Cake Size *</label>
+            <select id="size" name="size" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500">
+              <option value="">Select a size</option>
+              <option value="6inch">6" (serves 8-10)</option>
+              <option value="8inch">8" (serves 12-16)</option>
+              <option value="10inch">10" (serves 20-25)</option>
+              <option value="12inch">12" (serves 30-35)</option>
+              <option value="sheet">Quarter Sheet (serves 20-25)</option>
+            </select>
+          </div>
+          <div>
+            <label for="flavor" class="block text-sm font-medium text-gray-700">Cake Flavor *</label>
+            <select id="flavor" name="flavor" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500">
+              <option value="">Select a flavor</option>
+              <option value="vanilla">Classic Vanilla</option>
+              <option value="chocolate">Rich Chocolate</option>
+              <option value="marble">Marble</option>
+              <option value="redvelvet">Red Velvet</option>
+              <option value="carrot">Carrot</option>
+              <option value="lemon">Lemon</option>
+            </select>
+          </div>
+          <div>
+            <label for="filling" class="block text-sm font-medium text-gray-700">Filling</label>
+            <select id="filling" name="filling"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500">
+              <option value="">Select a filling</option>
+              <option value="vanilla">Vanilla Buttercream</option>
+              <option value="chocolate">Chocolate Ganache</option>
+              <option value="strawberry">Strawberry</option>
+              <option value="raspberry">Raspberry</option>
+              <option value="lemon">Lemon Curd</option>
+            </select>
+          </div>
+          <div>
+            <label for="frosting" class="block text-sm font-medium text-gray-700">Frosting *</label>
+            <select id="frosting" name="frosting" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500">
+              <option value="">Select frosting</option>
+              <option value="buttercream">Classic Buttercream</option>
+              <option value="chocolate">Chocolate Buttercream</option>
+              <option value="cream_cheese">Cream Cheese</option>
+              <option value="fondant">Fondant</option>
+              <option value="whipped">Whipped Cream</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Design Details -->
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-amber-900 border-b pb-2">Design Details</h2>
+        <div>
+          <label for="message" class="block text-sm font-medium text-gray-700">Message on Cake</label>
+          <input type="text" id="message" name="message" maxlength="50"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500"
+            placeholder="Happy Birthday, Congratulations, etc.">
+        </div>
+        <div>
+          <label for="design_details" class="block text-sm font-medium text-gray-700">Design Description *</label>
+          <textarea id="design_details" name="design_details" rows="4" required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500"
+            placeholder="Please describe your desired cake design, including colors, themes, and any specific decorations."></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Reference Image (optional)</label>
+          <input type="file" name="reference_image" accept="image/*"
+            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
+        </div>
+      </div>
+
+      <!-- Additional Information -->
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-amber-900 border-b pb-2">Additional Information</h2>
+        <div>
+          <label for="allergies" class="block text-sm font-medium text-gray-700">Allergy Information</label>
+          <textarea id="allergies" name="allergies" rows="2"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500"
+            placeholder="Please list any allergies or dietary restrictions we should be aware of."></textarea>
+        </div>
+        <div>
+          <label for="special_instructions" class="block text-sm font-medium text-gray-700">Special Instructions</label>
+          <textarea id="special_instructions" name="special_instructions" rows="2"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500"
+            placeholder="Any additional instructions or notes for us."></textarea>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="pt-4">
+        <button type="submit"
+          class="w-full bg-amber-600 text-white py-3 px-6 rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
+          Submit Order Request
+        </button>
+        <p class="mt-2 text-sm text-gray-500 text-center">* Required fields</p>
+      </div>
+    </form>
+  </main>
+
+  <footer class="bg-amber-800 text-white mt-12 py-8">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
+          <p>123 Bakery Street</p>
+          <p>New York, NY 10001</p>
+          <p>Phone: (555) 123-4567</p>
+          <p>Email: info@anniesbakery.com</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Hours</h3>
+          <p>Monday - Friday: 7am - 7pm</p>
+          <p>Saturday: 8am - 6pm</p>
+          <p>Sunday: 8am - 3pm</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Follow Us</h3>
+          <div class="flex space-x-4">
+            <a href="#" class="hover:text-amber-200">Facebook</a>
+            <a href="#" class="hover:text-amber-200">Instagram</a>
+            <a href="#" class="hover:text-amber-200">Twitter</a>
+          </div>
+        </div>
+      </div>
+      <div class="mt-8 text-center text-sm">
+        <p>&copy; 2025 Annie's Bakery. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize date picker
+    flatpickr("#pickup_date", {
+      minDate: "{{ min_date }}",
+      maxDate: "{{ max_date }}",
+      disable: [
+        function(date) {
+          // Disable Sundays and any other specific dates
+          return (date.getDay() === 0);
+        }
+      ],
+      dateFormat: "Y-m-d",
+      altInput: true,
+      altFormat: "F j, Y",
+      required: true
+    });
+
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+      const pickupDate = document.getElementById('pickup_date').value;
+      if (!pickupDate) {
+        e.preventDefault();
+        alert('Please select a pickup date');
+      }
+    });
+  </script>
+</body>
+</html>

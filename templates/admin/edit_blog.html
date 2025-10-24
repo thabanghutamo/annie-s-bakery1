@@ -1,0 +1,111 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Admin - {{ 'Edit Post' if post else 'New Post' }}{% endblock %}
+
+{% block head %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card">
+  <div class="admin-card-header">
+    <div class="flex justify-between items-center">
+      <h1 class="admin-title">{{ 'Edit Post' if post else 'New Post' }}</h1>
+      <a href="{{ url_for('admin.blog') }}" class="admin-button-secondary">
+        <svg class="-ml-1 mr-2 h-5 w-5 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Posts
+      </a>
+    </div>
+  </div>
+
+  <div class="admin-card-body">
+    <form method="post" enctype="multipart/form-data" class="admin-form">
+      <div class="grid grid-cols-1 gap-6">
+        <div class="admin-form-group">
+          <label class="admin-label">Title</label>
+          <input type="text" name="title" value="{{ post.title if post }}" 
+                 class="admin-input" aria-label="Post title" placeholder="Enter post title"
+                 title="Post title">
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label">Short Description</label>
+          <input type="text" name="short_description" value="{{ post.short_description if post }}"
+                 class="admin-input" aria-label="Post short description" 
+                 placeholder="Enter a brief description" title="Post short description">
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label">Content</label>
+          <textarea name="content" class="admin-textarea" rows="12" 
+                    aria-label="Post content" placeholder="Write your blog post content here"
+                    title="Post content">{{ post.content if post }}</textarea>
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label">Cover Image</label>
+          {% if post and post.cover_image %}
+          <div class="mb-4">
+            <img src="{{ post.cover_image }}" alt="{{ post.title }}" class="w-48 rounded shadow">
+          </div>
+          {% endif %}
+          <input type="file" name="cover_image" accept="image/*" class="admin-file-input mb-4"
+                 aria-label="Cover image" title="Choose cover image"
+                 onchange="previewImage(this, document.getElementById('cover-preview'))">
+          <div id="cover-preview" class="mt-2"></div>
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label">Additional Images</label>
+          {% if post and post.images %}
+          <div class="mb-4 grid grid-cols-4 gap-4">
+            {% for img in post.images %}
+            <div class="relative">
+              <img src="{{ img }}" alt="{{ post.title }}" class="w-full rounded shadow">
+              <input type="hidden" name="existing_blog_images[]" value="{{ img }}">
+              <button type="button" onclick="removeImage(this.parentElement)" 
+                      class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                      title="Remove image">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+          <input type="file" name="blog_images[]" accept="image/*" multiple class="admin-file-input"
+                 aria-label="Additional blog images" title="Choose additional images"
+                 onchange="previewMultipleImages(this, document.getElementById('images-preview'))">
+          <div id="images-preview" class="mt-4 grid grid-cols-4 gap-4"></div>
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label">Publish Date</label>
+          <input type="date" name="date" value="{{ post.date if post }}"
+                 class="admin-input" aria-label="Publish date" title="Choose publish date">
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-toggle">
+            <input type="checkbox" name="published" {{ 'checked' if post and post.published }} class="admin-toggle-input">
+            <span class="admin-toggle-label">Published</span>
+          </label>
+        </div>
+
+        <div class="flex items-center space-x-4">
+          <button type="submit" class="admin-button-primary">
+            <svg class="-ml-1 mr-2 h-5 w-5 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Save Post
+          </button>
+          <a href="{{ url_for('admin.blog') }}" class="admin-button-secondary">Cancel</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "public/base.html" %}
+
+{% block title %}Annie's Bakery - Home{% endblock %}
+
+{% block public_content %}
+<section class="bg-gradient-to-b from-pink-50 to-white py-12">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">Welcome to Annie's Bakery</h1>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        Crafting delicious moments with love, one cake at a time.
+        From custom celebrations to everyday treats, we bake your dreams into reality.
+      </p>
+      <div class="mt-8">
+        <a href="{{ url_for('public.order_form') }}" 
+           class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700">
+          Order Custom Cake
+        </a>
+        <a href="{{ url_for('public.products_page') }}"
+           class="ml-4 inline-flex items-center px-6 py-3 border border-pink-300 text-base font-medium rounded-md text-pink-700 bg-white hover:bg-pink-50">
+          View Products
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6">Featured Products</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+      {% for p in featured %}
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden group hover:shadow-md transition-shadow relative">
+        <a href="{{ url_for('public.product_detail', product_id=p.id) }}" class="block">
+          <div class="relative pb-[100%]">
+            <img class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                 src="{{ p.image or url_for('static', filename='uploads/placeholder.jpg') }}" 
+                 alt="{{ p.title }}">
+          </div>
+          <div class="p-4">
+            <h3 class="text-sm sm:text-base font-semibold text-gray-900 group-hover:text-pink-600 transition-colors line-clamp-2">{{ p.title }}</h3>
+            <p class="mt-1 text-xs sm:text-sm text-gray-600 line-clamp-2">{{ p.short_description or p.description }}</p>
+            <div class="mt-2 flex justify-between items-center">
+              <span class="text-sm sm:text-lg font-medium text-gray-900">R{{ "%.2f"|format(p.price) }}</span>
+              {% if current_user.is_authenticated %}
+                  <button onclick="event.stopPropagation(); event.preventDefault(); addToCart('{{ p.id }}', '{{ p.title }}', {{ p.price }})"
+                          class="text-pink-600 hover:text-pink-700 text-xs sm:text-sm font-medium relative z-10">
+                    <span class="hidden sm:inline">Add to Cart</span>
+                    <span class="sm:hidden">Add</span>
+                  </button>
+              {% else %}
+                  <a href="{{ url_for('auth.login', next=request.path) }}"
+                     onclick="event.stopPropagation(); event.preventDefault();"
+                     class="text-pink-600 hover:text-pink-700 text-xs sm:text-sm font-medium relative z-10">
+                    <span class="hidden sm:inline">Sign in to Buy</span>
+                    <span class="sm:hidden">Sign in</span>
+                  </a>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+      </div>
+      {% else %}
+      <div class="col-span-3 text-center py-12">
+        <p class="text-gray-500">No featured products yet.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block public_scripts %}
+<script>
+function addToCart(id, title, price) {
+  // Get existing cart from localStorage
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  
+  // Check if item already exists
+  const existingItem = cart.find(item => item.id === id);
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    cart.push({ id, title, price, quantity: 1 });
+  }
+  
+  // Save back to localStorage
+  localStorage.setItem('cart', JSON.stringify(cart));
+  
+  // Update cart count
+  const cartCountElement = document.querySelector('.cart-count');
+  if (cartCountElement) {
+    cartCountElement.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+  }
+  
+  // Show notification
+  const notification = document.createElement('div');
+  notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg';
+  notification.textContent = 'Added to cart!';
+  document.body.appendChild(notification);
+  setTimeout(() => notification.remove(), 2000);
+}
+
+// Initialize cart count on page load
+document.addEventListener('DOMContentLoaded', () => {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const cartCountElement = document.querySelector('.cart-count');
+  if (cartCountElement) {
+    cartCountElement.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+  }
+});
+</script>
+{% endblock %}

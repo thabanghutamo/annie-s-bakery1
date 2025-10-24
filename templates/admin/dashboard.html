@@ -1,0 +1,80 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Admin - Dashboard{% endblock %}
+
+{% block admin_content %}
+<div class="mb-6 sm:mb-8">
+  <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Dashboard Overview</h1>
+  <p class="text-sm sm:text-base text-gray-600">Welcome to your admin dashboard</p>
+</div>
+
+<div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
+  <div class="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+    <div class="text-sm sm:text-base text-gray-600">Total Products</div>
+    <div class="text-xl sm:text-2xl font-bold text-gray-900">{{ product_count }}</div>
+    <a href="{{ url_for('admin.products') }}" class="text-pink-600 text-sm hover:text-pink-700">View all →</a>
+  </div>
+  
+  <div class="bg-white p-6 rounded-lg shadow-sm">
+    <div class="text-gray-600">Blog Posts</div>
+    <div class="text-2xl font-bold text-gray-900">{{ post_count }}</div>
+    <a href="{{ url_for('admin.blog') }}" class="text-pink-600 text-sm hover:text-pink-700">View all →</a>
+  </div>
+  
+  <div class="bg-white p-6 rounded-lg shadow-sm">
+    <div class="text-gray-600">Pending Orders</div>
+    <div class="text-2xl font-bold text-gray-900">{{ order_count }}</div>
+    <a href="{{ url_for('admin.orders') }}" class="text-pink-600 text-sm hover:text-pink-700">View all →</a>
+  </div>
+  
+  <div class="bg-white p-6 rounded-lg shadow-sm">
+    <div class="text-gray-600">Custom Orders</div>
+    <div class="text-2xl font-bold text-gray-900">{{ custom_order_count }}</div>
+    <a href="{{ url_for('admin.orders') }}?type=custom" class="text-pink-600 text-sm hover:text-pink-700">View all →</a>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+  <div class="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+    <h2 class="text-base sm:text-lg font-bold mb-3 sm:mb-4 text-gray-900">Recent Orders</h2>
+    {% if recent_orders %}
+    <div class="space-y-2 sm:space-y-3">
+      {% for order in recent_orders %}
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-center border-b border-gray-100 pb-2 gap-2">
+        <div>
+          <div class="font-medium text-gray-900">#{{ order.id }}</div>
+          <div class="text-sm text-gray-600">{{ order.created_at }}</div>
+        </div>
+        <div class="text-sm px-2 py-1 rounded-full {{ 'bg-yellow-100 text-yellow-800' if order.status == 'pending' else 'bg-green-100 text-green-800' }}">
+          {{ order.status }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-600">No recent orders</p>
+    {% endif %}
+  </div>
+
+  <div class="bg-white p-6 rounded-lg shadow-sm">
+    <h2 class="text-lg font-bold mb-4 text-gray-900">Recent Blog Posts</h2>
+    {% if recent_posts %}
+    <div class="space-y-3">
+      {% for post in recent_posts %}
+      <div class="flex justify-between items-center border-b border-gray-100 pb-2">
+        <div>
+          <div class="font-medium text-gray-900">{{ post.title }}</div>
+          <div class="text-sm text-gray-600">{{ post.date }}</div>
+        </div>
+        <div class="text-sm px-2 py-1 rounded-full {{ 'bg-green-100 text-green-800' if post.published else 'bg-gray-100 text-gray-600' }}">
+          {{ 'Published' if post.published else 'Draft' }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-600">No blog posts yet</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

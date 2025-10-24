@@ -1,0 +1,80 @@
+{% extends "public/base.html" %}
+
+{% block title %}My Orders - Annie's Baking{% endblock %}
+
+{% block public_content %}
+<div class="max-w-6xl mx-auto p-6">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">My Orders</h1>
+        
+        {% if not orders %}
+            <div class="bg-white rounded-lg shadow-sm p-12 text-center">
+                <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                <h3 class="mt-4 text-lg font-medium text-gray-900">No Orders Yet</h3>
+                <p class="mt-2 text-gray-500">
+                    You haven't placed any orders yet. Check out our products to get started!
+                </p>
+                <div class="mt-6">
+                    <a href="{{ url_for('public.products_page') }}" 
+                       class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                        Browse Products
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="divide-y divide-gray-200">
+                    {% for order in orders %}
+                        <div class="p-6 hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-medium text-gray-900">Order #{{ order.id }}</h3>
+                                <span class="px-3 py-1 rounded-full text-sm font-medium
+                                    {% if order.status == 'completed' %}bg-green-100 text-green-800
+                                    {% elif order.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                    {{ order.status|title }}
+                                </span>
+                            </div>
+                            
+                            {% if order.type == 'custom' %}
+                                <div class="space-y-2 text-sm text-gray-600">
+                                    <p><span class="font-medium text-gray-900">Cake Size:</span> {{ order.size }}</p>
+                                    <p><span class="font-medium text-gray-900">Flavor:</span> {{ order.flavor }}</p>
+                                    {% if order.notes %}
+                                        <p><span class="font-medium text-gray-900">Special Instructions:</span> {{ order.notes }}</p>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <div class="space-y-2">
+                                    {% for item in order.items %}
+                                        <div class="flex justify-between items-center text-sm">
+                                            <div class="flex items-center">
+                                                <span class="font-medium text-gray-900">{{ item.quantity }}x</span>
+                                                <span class="ml-2 text-gray-600">{{ item.title }}</span>
+                                            </div>
+                                            <span class="text-gray-900">R{{ "%.2f"|format(item.price * item.quantity) }}</span>
+                                        </div>
+                                    {% endfor %}
+                                    <div class="pt-3 mt-3 border-t border-gray-200 flex justify-between items-center font-medium">
+                                        <span class="text-gray-900">Total</span>
+                                        <span class="text-lg text-gray-900">R{{ "%.2f"|format(order.total) }}</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="mt-4 flex justify-between items-center text-sm">
+                                <span class="text-gray-500">{{ order.created_at|datetime }}</span>
+                                <span class="px-3 py-1 rounded-full {% if order.payment_status == 'paid' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %} font-medium">
+                                    {{ order.payment_status|title }}
+                                </span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

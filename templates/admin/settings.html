@@ -1,0 +1,55 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Admin - Settings{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h1 class="admin-title">Payment & App Settings</h1>
+  </div>
+
+  <div class="admin-card-body">
+    <form method="post" class="admin-form">
+      <div class="grid grid-cols-1 gap-6">
+        <div class="admin-form-group">
+          <label class="admin-label">Payment Gateway</label>
+          <select name="gateway" class="admin-select" aria-label="Select payment gateway">
+            <option value="">-- Select Payment Gateway --</option>
+            <option value="stripe" {{ 'selected' if current.gateway=='stripe' else '' }}>Stripe</option>
+            <option value="paystack" {{ 'selected' if current.gateway=='paystack' else '' }}>Paystack</option>
+            <option value="yoco" {{ 'selected' if current.gateway=='yoco' else '' }}>Yoco</option>
+          </select>
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label">API Key</label>
+          <input type="text" name="api_key" value="{{ current.api_key }}" 
+                 class="admin-input" aria-label="API Key" placeholder="Enter API key">
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label">API Secret</label>
+          <input type="password" name="api_secret" value="{{ current.api_secret }}" 
+                 class="admin-input" aria-label="API Secret" placeholder="Enter API secret">
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label">Webhook URL</label>
+          <input type="url" name="webhook" value="{{ current.webhook }}" 
+                 class="admin-input" aria-label="Webhook URL" placeholder="Enter webhook URL">
+        </div>
+
+        <div class="flex items-center space-x-4">
+          <button type="submit" class="admin-button-primary">
+            <svg class="-ml-1 mr-2 h-5 w-5 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Save Settings
+          </button>
+          <button type="reset" class="admin-button-secondary">Reset</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

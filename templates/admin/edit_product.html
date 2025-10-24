@@ -1,0 +1,122 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Admin - {{ 'Edit Product' if product else 'New Product' }}{% endblock %}
+
+{% block head %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card">
+  <div class="admin-card-header">
+    <div class="flex justify-between items-center">
+      <h1 class="admin-title">{{ 'Edit Product' if product else 'New Product' }}</h1>
+      <a href="{{ url_for('admin.products') }}" class="admin-button-secondary">
+        <svg class="-ml-1 mr-2 h-5 w-5 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Products
+      </a>
+    </div>
+  </div>
+
+  <div class="admin-card-body p-4 sm:p-6">
+    <form method="post" enctype="multipart/form-data" class="admin-form responsive-form">
+      {{ form.csrf_token }}
+      <div class="grid grid-cols-1 gap-4 sm:gap-6">
+        <div class="admin-form-group">
+          <label class="admin-label text-sm sm:text-base">Title</label>
+          <input type="text" name="title" value="{{ product.title if product }}" 
+                 class="admin-input w-full text-sm sm:text-base" aria-label="Product title" placeholder="Enter product title"
+                 title="Product title">
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label">Price</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">R</span>
+            <input type="number" name="price" step="0.01" value="{{ product.price if product }}" 
+                   class="admin-input pl-8" min="0" aria-label="Product price" 
+                   placeholder="Enter product price" title="Product price">
+          </div>
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label">Description</label>
+          <textarea name="description" class="admin-textarea" rows="4" 
+                    aria-label="Product description" placeholder="Enter product description"
+                    title="Product description">{{ product.description if product }}</textarea>
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label">Category</label>
+          <input type="text" name="category" value="{{ product.category if product }}" 
+                 class="admin-input" aria-label="Product category" placeholder="Enter product category"
+                 title="Product category">
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label">Main Image</label>
+          {% if product and product.image %}
+          <div class="mb-4">
+            <img src="{{ product.image }}" alt="{{ product.title }}" class="w-48 rounded shadow">
+          </div>
+          {% endif %}
+          <input type="file" name="image" accept="image/*" class="admin-file-input mb-4"
+                 aria-label="Main product image" title="Choose main product image"
+                 onchange="previewImage(this, document.getElementById('main-image-preview'))">
+          <div id="main-image-preview" class="mt-2 w-48"></div>
+          
+          <label class="admin-label mt-6">Additional Images</label>
+          {% if product and product.additional_images %}
+          <div class="mb-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+            {% for img in product.additional_images %}
+            <div class="relative">
+              <img src="{{ img }}" alt="{{ product.title }}" class="w-full h-24 sm:h-32 object-cover rounded shadow">
+              <input type="hidden" name="existing_images[]" value="{{ img }}">
+              <button type="button" onclick="removeImage(this.parentElement)" 
+                      class="absolute top-1 sm:top-2 right-1 sm:right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+          <input type="file" name="additional_images[]" accept="image/*" multiple class="admin-file-input"
+                 aria-label="Additional product images" title="Choose additional product images"
+                 onchange="previewMultipleImages(this, document.getElementById('additional-images-preview'))">
+          <div id="additional-images-preview" class="mt-4 grid grid-cols-4 gap-4"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="admin-form-group">
+            <label class="admin-toggle">
+              <input type="checkbox" name="visible" {{ 'checked' if not product or product.visible }} class="admin-toggle-input">
+              <span class="admin-toggle-label">Visible on store</span>
+            </label>
+          </div>
+
+          <div class="admin-form-group">
+            <label class="admin-toggle">
+              <input type="checkbox" name="featured" {{ 'checked' if product and product.featured }} class="admin-toggle-input">
+              <span class="admin-toggle-label">Featured on home</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-4">
+          <button type="submit" class="admin-button-primary">
+            <svg class="-ml-1 mr-2 h-5 w-5 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Save Product
+          </button>
+          <a href="{{ url_for('admin.products') }}" class="admin-button-secondary">Cancel</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

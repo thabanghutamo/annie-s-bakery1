@@ -1,0 +1,31 @@
+{% extends "public/base.html" %}
+
+{% block content %}
+<article class="max-w-4xl mx-auto px-4 py-8">
+  {% if post.cover_image %}
+  <div class="mb-8 rounded-lg overflow-hidden">
+    <img src="{{ post.cover_image }}" alt="{{ post.title }}" class="w-full h-64 object-cover">
+  </div>
+  {% endif %}
+
+  <header class="mb-8">
+    <h1 class="text-4xl font-bold mb-4">{{ post.title }}</h1>
+    <div class="flex items-center text-gray-600">
+      <span class="mr-4">{{ post.created_at|datetime }}</span>
+      {% if post.author %}
+      <span>By {{ post.author }}</span>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="prose prose-lg max-w-none">
+    {{ post.content|markdown|safe }}
+  </div>
+
+  <footer class="mt-12 pt-6 border-t">
+    <a href="{{ url_for('public.blog_page') }}" class="text-blue-600 hover:text-blue-800">
+      ← Back to Blog
+    </a>
+  </footer>
+</article>
+{% endblock %}

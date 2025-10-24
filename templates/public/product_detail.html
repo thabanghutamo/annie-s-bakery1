@@ -1,0 +1,95 @@
+{% extends "public/base.html" %}
+
+{% block title %}{{ product.title }} - Annie's Bakery{% endblock %}
+
+{% block public_content %}
+<div class="max-w-6xl mx-auto p-6">
+  <nav class="mb-8">
+    <a href="{{ url_for('public.products_page') }}" class="text-pink-600 hover:text-pink-700 flex items-center gap-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Back to Products
+    </a>
+  </nav>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+    <!-- Image Gallery -->
+    <div class="space-y-4">
+      <div class="aspect-square rounded-lg overflow-hidden bg-gray-100">
+        <img id="main-image" src="{{ images[0] or url_for('static', filename='uploads/placeholder.jpg') }}" 
+             alt="{{ product.title }}" 
+             class="w-full h-full object-cover">
+      </div>
+      {% if images|length > 1 %}
+      <div class="grid grid-cols-4 gap-4">
+        {% for image in images %}
+        <button onclick="updateMainImage('{{ image }}')" 
+                class="aspect-square rounded-lg overflow-hidden bg-gray-100 hover:ring-2 hover:ring-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500">
+          <img src="{{ image }}" 
+               alt="{{ product.title }} - Image {{ loop.index }}" 
+               class="w-full h-full object-cover">
+        </button>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Product Info -->
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">{{ product.title }}</h1>
+      <div class="mt-4">
+        <span class="text-2xl font-medium text-gray-900">R{{ "%.2f"|format(product.price) }}</span>
+      </div>
+      
+      {% if product.description %}
+      <div class="mt-6 text-gray-700 prose">
+        {{ product.description }}
+      </div>
+      {% endif %}
+
+      <!-- Additional Details -->
+      {% if product.ingredients %}
+      <div class="mt-6">
+        <h3 class="text-lg font-medium text-gray-900">Ingredients</h3>
+        <p class="mt-2 text-gray-700">{{ product.ingredients }}</p>
+      </div>
+      {% endif %}
+
+      {% if product.allergens %}
+      <div class="mt-6">
+        <h3 class="text-lg font-medium text-gray-900">Allergen Information</h3>
+        <p class="mt-2 text-gray-700">{{ product.allergens }}</p>
+      </div>
+      {% endif %}
+
+      <!-- Add to Cart Button -->
+      <div class="mt-8">
+        <button onclick="addToCart('{{ product.id }}', '{{ product.title }}', {{ product.price }}, '{{ images[0] }}')"
+                class="w-full bg-pink-600 text-white py-3 px-8 rounded-lg font-medium hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2">
+          Add to Cart
+        </button>
+      </div>
+
+      {% if product.custom_options %}
+      <div class="mt-6">
+        <h3 class="text-lg font-medium text-gray-900">Customization Available</h3>
+        <p class="mt-2 text-gray-700">This item can be customized. Please <a href="{{ url_for('public.order_form') }}" class="text-pink-600 hover:text-pink-700">contact us</a> for custom orders.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block public_scripts %}
+<script>
+function addToCart(id, title, price, image) {
+  cart.add(id, title, price, image);
+}
+
+function updateMainImage(src) {
+  document.getElementById('main-image').src = src;
+}
+</script>
+{% endblock %}

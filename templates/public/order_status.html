@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Order Status - Annie's Bakery</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+  <div class="max-w-3xl mx-auto p-6">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Order Status</h1>
+      <p class="mt-2 text-gray-600">Track your order and view details below.</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+      <!-- Status Timeline -->
+      <div class="p-6 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          {% set statuses = ['pending', 'confirmed', 'processing', 'ready', 'completed'] if not is_custom else ['pending', 'confirmed', 'in_progress', 'ready', 'completed'] %}
+          {% for status in statuses %}
+          <div class="flex flex-col items-center">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center
+                        {{ 'bg-green-500 text-white' if order.status == status or statuses.index(status) < statuses.index(order.status)
+                           else 'bg-gray-200 text-gray-400' }}">
+              {% if status == 'pending' %}
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {% elif status == 'confirmed' %}
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {% elif status == 'processing' or status == 'in_progress' %}
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              {% elif status == 'ready' %}
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              {% else %}
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              {% endif %}
+            </div>
+            <div class="mt-2 text-sm font-medium {{ 'text-green-600' if order.status == status else 'text-gray-500' }}">
+              {{ status|title }}
+            </div>
+          </div>
+          {% if not loop.last %}
+          <div class="flex-1 h-1 mx-2 {{ 'bg-green-500' if statuses.index(status) < statuses.index(order.status) else 'bg-gray-200' }}"></div>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Order Details -->
+      <div class="p-6">
+        <h2 class="text-xl font-semibold mb-4">Order Details</h2>
+        <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Order Number</dt>
+            <dd class="mt-1 text-gray-900">{{ order.id }}</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Order Date</dt>
+            <dd class="mt-1 text-gray-900">{{ order.created_at|datetimeformat }}</dd>
+          </div>
+          {% if is_custom %}
+          <div class="sm:col-span-2">
+            <dt class="text-sm font-medium text-gray-500">Custom Order Details</dt>
+            <dd class="mt-1 text-gray-900">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <span class="font-medium">Size:</span> {{ order.details.size }}
+                </div>
+                <div>
+                  <span class="font-medium">Flavor:</span> {{ order.details.flavor }}
+                </div>
+                {% if order.details.filling %}
+                <div>
+                  <span class="font-medium">Filling:</span> {{ order.details.filling }}
+                </div>
+                {% endif %}
+                <div>
+                  <span class="font-medium">Pickup Date:</span> {{ order.details.pickup_date }}
+                </div>
+              </div>
+            </dd>
+          </div>
+          {% else %}
+          <div class="sm:col-span-2">
+            <dt class="text-sm font-medium text-gray-500">Items</dt>
+            <dd class="mt-1">
+              <ul class="divide-y divide-gray-200">
+                {% for item in order.items %}
+                <li class="py-3 flex justify-between">
+                  <div>
+                    <span class="font-medium">{{ item.title }}</span>
+                    <span class="text-gray-500 text-sm ml-2">x{{ item.quantity }}</span>
+                  </div>
+                  <span class="text-gray-900">R{{ "%.2f"|format(item.price * item.quantity) }}</span>
+                </li>
+                {% endfor %}
+              </ul>
+            </dd>
+          </div>
+          {% endif %}
+        </dl>
+
+        {% if order.total %}
+        <div class="mt-6 pt-6 border-t border-gray-200">
+          <div class="flex justify-between items-center">
+            <span class="text-base font-medium text-gray-900">Total</span>
+            <span class="text-xl font-medium text-gray-900">R{{ "%.2f"|format(order.total) }}</span>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Contact Section -->
+      <div class="px-6 py-4 bg-gray-50">
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-gray-600">Need help? Contact us</span>
+          <a href="{{ url_for('public.contact') }}" class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-50">
+            Contact Support
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 text-center">
+      <a href="{{ url_for('public.home') }}" class="text-blue-600 hover:text-blue-800">
+        &larr; Return to Homepage
+      </a>
+    </div>
+  </div>
+</body>
+</html>
