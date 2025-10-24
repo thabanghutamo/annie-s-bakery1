@@ -17,6 +17,10 @@ if str(ROOT) not in sys.path:
 
 from utils.json_store import read_json, write_json
 
+def generate_safe_hash(password: str) -> str:
+    """Generate a password hash that works across Werkzeug versions."""
+    return generate_password_hash(password, method='pbkdf2:sha256')
+
 
 def create_admin(email: str, password: str) -> bool:
     """Create an admin user and write to data/users.json. Returns True on success."""
@@ -25,7 +29,7 @@ def create_admin(email: str, password: str) -> bool:
     users.append({
         'id': uid,
         'email': email,
-        'password_hash': generate_password_hash(password),
+        'password_hash': generate_safe_hash(password),
         'is_admin': True  # Make sure to set the admin flag
     })
     write_json('users.json', users)

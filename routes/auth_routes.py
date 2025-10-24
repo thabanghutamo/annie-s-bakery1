@@ -5,6 +5,10 @@ from utils.json_store import read_json, write_json
 from models.user import User
 import uuid
 
+def generate_safe_hash(password: str) -> str:
+    """Generate a password hash that works across Werkzeug versions."""
+    return generate_password_hash(password, method='pbkdf2:sha256')
+
 bp = Blueprint('auth', __name__)
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -96,7 +100,7 @@ def register():
         new_user = {
             'id': str(uuid.uuid4()),
             'email': email,
-            'password_hash': generate_password_hash(password),
+            'password_hash': generate_safe_hash(password),
             'is_admin': False
         }
         users.append(new_user)
