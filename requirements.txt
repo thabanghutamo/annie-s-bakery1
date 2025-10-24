@@ -1,11 +1,11 @@
-Flask==2.0.3
+Flask==2.2.5
 Flask-Login==0.5.0
 WTForms==3.0.1
 python-dotenv==1.0.0
-Werkzeug==2.0.3
+Werkzeug==3.0.6
 itsdangerous==2.0.1
 gunicorn==21.2.0  # For Linux/Unix deployment
-waitress==2.1.2   # For Windows deployment
+waitress==3.0.1   # For Windows deployment
 
 # Production dependencies
 redis==5.0.1
