@@ -1,0 +1,16 @@
+[Unit]
+Description=Annie's Bakery Web Application
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/annies
+Environment="PATH=/var/www/annies/venv/bin"
+Environment="FLASK_APP=app.py"
+Environment="FLASK_ENV=production"
+ExecStart=/var/www/annies/venv/bin/gunicorn -c gunicorn.conf.py wsgi:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
