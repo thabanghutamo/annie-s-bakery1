@@ -1,10 +1,15 @@
 """Form classes for admin and public forms."""
-from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, FloatField, FileField, BooleanField
+from wtforms import Form, StringField, TextAreaField, FloatField, FileField, BooleanField
 from wtforms.validators import DataRequired, Email, Optional, NumberRange
-from flask_wtf.file import FileAllowed
 
-class ProductForm(FlaskForm):
+class BaseForm(Form):
+    """Base form class with CSRF protection."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'formdata' in kwargs:
+            self.process(kwargs['formdata'])
+
+class ProductForm(BaseForm):
     """Form for creating/editing products."""
     title = StringField('Title', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
@@ -22,7 +27,7 @@ class ProductForm(FlaskForm):
     featured = BooleanField('Featured on home')
     publish_at = StringField('Publish At', validators=[Optional()])
 
-class BlogPostForm(FlaskForm):
+class BlogPostForm(BaseForm):
     """Form for creating/editing blog posts."""
     title = StringField('Title', validators=[DataRequired()])
     short_description = TextAreaField('Short Description', validators=[DataRequired()])
@@ -34,7 +39,7 @@ class BlogPostForm(FlaskForm):
     published = BooleanField('Published')
     publish_at = StringField('Publish At', validators=[Optional()])
 
-class CustomOrderForm(FlaskForm):
+class CustomOrderForm(BaseForm):
     """Form for custom cake/pastry orders."""
     name = StringField('Name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -53,7 +58,7 @@ class CustomOrderForm(FlaskForm):
     allergies = TextAreaField('Allergies/Dietary Restrictions', validators=[Optional()])
     special_instructions = TextAreaField('Special Instructions', validators=[Optional()])
 
-class ContactForm(FlaskForm):
+class ContactForm(BaseForm):
     """Contact form for public inquiries."""
     name = StringField('Name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -61,7 +66,7 @@ class ContactForm(FlaskForm):
     subject = StringField('Subject', validators=[DataRequired()])
     message = TextAreaField('Message', validators=[DataRequired()])
 
-class PaymentSettingsForm(FlaskForm):
+class PaymentSettingsForm(BaseForm):
     """Form for admin payment gateway settings."""
     gateway = StringField('Payment Gateway', validators=[DataRequired()])
     api_key = StringField('API Key', validators=[DataRequired()])

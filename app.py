@@ -4,7 +4,8 @@ import time
 from datetime import datetime
 from typing import Optional, Dict, Any, List
 
-from flask import Flask
+import secrets
+from flask import Flask, request, session
 from flask_login import LoginManager
 from dotenv import load_dotenv
 
@@ -21,6 +22,21 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+
+# CSRF Protection
+@app.before_request
+def csrf_protect():
+    if request.method == "POST":
+        token = session.get('_csrf_token', None)
+        if not token or token != request.form.get('_csrf_token'):
+            return 'Invalid CSRF token', 400
+
+def generate_csrf_token():
+    if '_csrf_token' not in session:
+        session['_csrf_token'] = secrets.token_hex(16)
+    return session['_csrf_token']
+
+app.jinja_env.globals['csrf_token'] = generate_csrf_token
 
 # Initialize upload directories
 try:
