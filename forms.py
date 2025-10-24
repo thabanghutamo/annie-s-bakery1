@@ -1,6 +1,15 @@
 """Form classes for admin and public forms."""
 from wtforms import Form, StringField, TextAreaField, FloatField, FileField, BooleanField
-from wtforms.validators import DataRequired, Email, Optional, NumberRange
+from wtforms.validators import DataRequired, Email, Optional, NumberRange, ValidationError
+import os
+
+def validate_image(form, field):
+    """Custom validator for image files."""
+    if field.data:
+        filename = field.data.filename
+        ext = os.path.splitext(filename)[1][1:].lower()
+        if ext not in ['jpg', 'jpeg', 'png', 'gif', 'webp']:
+            raise ValidationError('File must be an image (jpg, jpeg, png, gif, webp)')
 
 class BaseForm(Form):
     """Base form class with CSRF protection."""
@@ -21,7 +30,7 @@ class ProductForm(BaseForm):
     category = StringField('Category', validators=[DataRequired()])
     image = FileField('Image', validators=[
         Optional(),
-        FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Images only!')
+        validate_image
     ])
     visible = BooleanField('Visible on store')
     featured = BooleanField('Featured on home')
@@ -34,7 +43,7 @@ class BlogPostForm(BaseForm):
     content = TextAreaField('Content', validators=[DataRequired()])
     cover_image = FileField('Cover Image', validators=[
         Optional(),
-        FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Images only!')
+        validate_image
     ])
     published = BooleanField('Published')
     publish_at = StringField('Publish At', validators=[Optional()])
@@ -52,7 +61,7 @@ class CustomOrderForm(BaseForm):
     design_details = TextAreaField('Design Details', validators=[DataRequired()])
     reference_image = FileField('Reference Image', validators=[
         Optional(),
-        FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Images only!')
+        validate_image
     ])
     pickup_date = StringField('Pickup Date', validators=[DataRequired()])
     allergies = TextAreaField('Allergies/Dietary Restrictions', validators=[Optional()])
