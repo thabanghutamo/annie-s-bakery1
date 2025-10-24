@@ -1,8 +1,8 @@
 Flask==2.2.5
 Flask-Login==0.6.3
-Flask-WTF==1.1.1
+Flask-WTF==1.0.1
 python-dotenv==1.0.0
-Werkzeug==2.3.7
+Werkzeug==2.2.3
 itsdangerous==2.1.2
 gunicorn==21.2.0  # For Linux/Unix deployment
 waitress==2.1.2   # For Windows deployment
