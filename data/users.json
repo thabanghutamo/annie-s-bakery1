@@ -2,7 +2,7 @@
   {
     "id": "admin-1",
     "email": "thabanghutamo@gmail.com",
-    "password_hash": "scrypt:32768:8:1$UIibcagcXCnO88Zy$555f3a6bbad47d28444b61252751768160e4bcb7c4330c8de598a14aec60cde5833adb9a1c3b3856405d6920a904afbd65983597498e602d9cd6da4a5fba3f6c",
+    "password_hash": "pbkdf2:sha256:1000000$wMgvefEQsxup226L$d0b400715f7d20a065486843e14dd453eb8e1016b4a2f4ae2a55b72a7d5990ad",
     "is_admin": true
   }
 ]

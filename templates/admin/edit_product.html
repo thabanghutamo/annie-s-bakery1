@@ -22,7 +22,7 @@
 
   <div class="admin-card-body p-4 sm:p-6">
     <form method="post" enctype="multipart/form-data" class="admin-form responsive-form">
-      {{ form.csrf_token }}
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <div class="grid grid-cols-1 gap-4 sm:gap-6">
         <div class="admin-form-group">
           <label class="admin-label text-sm sm:text-base">Title</label>

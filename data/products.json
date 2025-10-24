@@ -45,5 +45,21 @@
     "visible": true,
     "featured": true,
     "publish_at": null
+  },
+  {
+    "id": "prod-4",
+    "created_at": "2025-10-24T13:57:39.534654+00:00",
+    "image": null,
+    "additional_images": [
+      "/static/uploads/products/products-1000167450.jpg"
+    ],
+    "title": "soft cookies",
+    "description": "10/5mL bucket",
+    "short_description": "",
+    "price": 30.0,
+    "category": "cookies",
+    "visible": true,
+    "featured": true,
+    "publish_at": null
   }
 ]

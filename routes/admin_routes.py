@@ -225,45 +225,41 @@ def products_new():
         flash('Please correct the errors below', 'error')
         return render_template('admin/edit_product.html', form=form)
     
-        products = cast(Products, read_json('products.json', []))
-        
-        # Extract and validate form data
-        new_product = extract_product_form_data(form)
-        
-        # Set the product ID
-        new_product['id'] = f"prod-{len(products)+1}"
-        
-        # Handle main image upload if present
-        if form.image.data:
-            image_url = save_uploaded_file(
-                cast(FileStorage, form.image.data),
-                'products'
+    products = cast(Products, read_json('products.json', []))
+    
+    # Extract and validate form data
+    new_product = extract_product_form_data(form)
+    
+    # Set the product ID
+    new_product['id'] = f"prod-{len(products)+1}"
+    
+    # Handle main image upload if present
+    if form.image.data:
+        image_url = save_uploaded_file(
+            cast(FileStorage, form.image.data),
+            'products'
+        )
+        if image_url:
+            new_product['image'] = image_url
+        else:
+            flash('Failed to upload main image', 'error')
+            return render_template(
+                'admin/edit_product.html',
+                form=form
             )
-            if image_url:
-                new_product['image'] = image_url
-            else:
-                flash('Failed to upload main image', 'error')
-                return render_template(
-                    'admin/edit_product.html',
-                    form=form
-                )
-        
-        # Handle additional images
-        additional_images = request.files.getlist('additional_images[]')
-        if additional_images:
-            saved_urls = save_multiple_files(additional_images, 'products')
-            if saved_urls:
-                new_product['additional_images'] = saved_urls
-        
-        # Save the new product
-        products.append(new_product)
-        write_json('products.json', products)
-        flash('Product created successfully', 'success')
-        return redirect(url_for('admin.products'))
-        
-    return render_template('admin/edit_product.html', form=form)
-
-
+    
+    # Handle additional images
+    additional_images = request.files.getlist('additional_images[]')
+    if additional_images:
+        saved_urls = save_multiple_files(additional_images, 'products')
+        if saved_urls:
+            new_product['additional_images'] = saved_urls
+    
+    # Save the new product
+    products.append(new_product)
+    write_json('products.json', products)
+    flash('Product created successfully', 'success')
+    return redirect(url_for('admin.products'))
 @bp.route('/products/edit/<product_id>', methods=['GET', 'POST'])
 @admin_required
 def products_edit(product_id: str):
