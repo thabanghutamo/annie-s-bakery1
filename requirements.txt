@@ -2,10 +2,10 @@ Flask==2.2.5
 Flask-Login==0.6.3
 WTForms==3.0.1
 python-dotenv==1.0.0
-Werkzeug==2.2.3
+Werkzeug==3.0.6
 itsdangerous==2.1.2
 gunicorn==21.2.0  # For Linux/Unix deployment
-waitress==2.1.2   # For Windows deployment
+waitress==3.0.1   # For Windows deployment
 email_validator==2.1.0.post1  # Required for WTForms email validation
 
 # Production dependencies
